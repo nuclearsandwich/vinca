@@ -68,7 +68,7 @@ def parse_command_line(argv):
         """
       Examples:
         {0} -d ./examples/
-      See: https://github.com/robostack/vinca
+      See: https://github.com/RoboStack/vinca
     """
     ).format(os.path.basename(argv[0]))
     formatter_class = argparse.RawDescriptionHelpFormatter
@@ -340,7 +340,7 @@ def generate_output(pkg_shortname, vinca_conf, distro, version):
         ]
 
     # fixup problems with udev (which is mapped to libusb):
-    if "libusb" in output["requirements"]["host"]:
+    if "libusb" in output["requirements"]["host"] or "ros-"+distro.name+"-lusb" in output["requirements"]["host"]:
         output["requirements"]["build"] += [
             {"sel(linux)": "{{ cdt('libudev') }}"},
             {"sel(linux)": "{{ cdt('libudev-devel') }}"},
@@ -706,9 +706,6 @@ def parse_package(pkg, distro, vinca_conf, path):
         recipe["requirements"]["run"].extend(
             resolve_pkgname(d.name, vinca_conf, distro)
         )
-
-    if name == "eigenpy":
-        recipe["requirements"]["build"] += ["pkg-config"]
 
     if pkg.get_build_type() in ["cmake", "catkin"]:
         recipe["build"]["script"] = {
